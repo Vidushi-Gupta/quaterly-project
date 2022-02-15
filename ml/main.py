@@ -1,0 +1,70 @@
+from matplotlib.pyplot import text
+import uvicorn
+from fastapi import FastAPI
+import joblib
+
+import pandas as pd
+
+import tweet_scraper
+from pydantic import BaseModel
+
+from tweet_scraper import Import_tweet_sentiment
+tw_obj=Import_tweet_sentiment()
+
+import os
+from os.path import dirname, join, realpath
+
+from train_app import tokenize
+
+app = FastAPI()
+
+with open(
+    join(dirname(realpath(__file__)), "models/classifier_ea.pkl"), "rb"
+) as f:
+    model = joblib.load(f)
+
+df = pd.read_csv('data/figure_eight_data.csv')
+
+
+@app.get('/')
+def index():
+
+    return {'message': "This is the main page.. See you in a bit!"}
+
+
+@app.get('/predict')
+def predict(data: str):
+
+    query = data
+
+    print(query)
+
+    all_tweets=tw_obj.get_hashtag(query)
+
+    target_text = all_tweets
+
+    print(target_text)
+
+    query2=all_tweets[0]
+
+    results_list = []
+    
+    classification_labels = model.predict([query2])[0]
+    classification_results = dict(zip(df.columns[4:], classification_labels))
+    for category, classification in classification_results.items():
+        if classification==1:
+            results_list.append(category)
+
+
+    print(results_list)
+
+
+
+    return {
+        'classification_results':results_list
+    }
+
+
+if __name__ == '__main__':
+
+    uvicorn.run(app, host='127.0.0.1', port=4000, debug=True)
