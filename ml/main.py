@@ -65,6 +65,29 @@ def predict(data: str):
     }
 
 
+@app.get('/predict_wi')
+def predict_wi(data: str):
+
+    query = data
+
+    print(query)
+    results_list = []
+    
+    classification_labels = model.predict([query])[0]
+    classification_results = dict(zip(df.columns[4:], classification_labels))
+    for category, classification in classification_results.items():
+        if classification==1:
+            results_list.append(category)
+
+
+    print(results_list)
+
+
+
+    return {
+        'classification_results':results_list
+    }
+
 if __name__ == '__main__':
 
     uvicorn.run(app, host='127.0.0.1', port=4000, debug=True)
