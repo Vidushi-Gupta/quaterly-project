@@ -6,6 +6,13 @@ name = "pypi"
 [packages]
 fastapi = "*"
 uvicorn = "*"
+matplotlib = "*"
+joblib = "*"
+pandas = "*"
+tweepy = "*"
+nltk = "*"
+sklearn = "*"
+sqlalchemy = "*"
 
 [dev-packages]
 

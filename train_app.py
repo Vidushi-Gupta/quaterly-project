@@ -66,4 +66,4 @@ for i in range(Y_test.shape[1]):
 
 
 print("Now Dumping Model.")
-joblib.dump(model, "models/classifier_ea.pkl")
+joblib.dump(model, "classifier_ea.pkl")
